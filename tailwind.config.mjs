@@ -20,4 +20,11 @@ export default {
     },
   },
   plugins: [],
+  safelist: [
+    'hidden',
+    'block',
+    'flex',
+    'bg-primary-800', // Ensure hero background is never purged
+    'text-white',
+  ],
 }

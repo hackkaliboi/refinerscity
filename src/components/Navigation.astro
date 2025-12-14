@@ -1,0 +1,126 @@
+---
+const navigation = [
+  { name: 'Home', href: '/' },
+  { name: 'About', href: '/about' },
+  { name: 'Ministries', href: '/ministries' },
+  { name: 'Sermons', href: '/sermons' },
+  { name: 'Events', href: '/events' },
+  { name: 'Give', href: '/give' },
+  { name: 'Contact', href: '/contact' },
+];
+---
+
+<header class="bg-white shadow-md sticky top-0 z-50">
+  <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Top">
+    <div class="flex w-full items-center justify-between py-3 sm:py-4">
+      <div class="flex items-center">
+        <a href="/" class="flex items-center">
+          <span class="text-xl sm:text-2xl font-bold text-primary-800">Refiners City</span>
+        </a>
+      </div>
+      <!-- Desktop Navigation -->
+      <div class="hidden ml-10 space-x-1 lg:flex">
+        {
+          navigation.map((link) => (
+            <a 
+              href={link.href} 
+              class="px-3 xl:px-4 py-2 rounded-md text-sm xl:text-base font-medium text-primary-700 hover:text-primary-900 hover:bg-primary-100 transition-all duration-200"
+              aria-current={Astro.url.pathname === link.href ? "page" : undefined}
+            >
+              {link.name}
+            </a>
+          ))
+        }
+      </div>
+      <div class="ml-10 space-x-4 hidden lg:block">
+        <a
+          href="/new-here"
+          class="inline-block bg-primary-600 py-2 px-4 xl:px-6 border border-transparent rounded-md text-sm xl:text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 shadow-md hover:shadow-lg min-h-[44px] flex items-center"
+        >
+          I'm New Here
+        </a>
+      </div>
+      <!-- Mobile menu button -->
+      <div class="lg:hidden flex items-center">
+        <button 
+          type="button" 
+          id="mobile-menu-button"
+          class="inline-flex items-center justify-center rounded-md p-2.5 text-primary-700 hover:text-primary-900 hover:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 transition-all duration-200 min-h-[44px] min-w-[44px]"
+          aria-expanded="false"
+          aria-label="Toggle navigation menu"
+        >
+          <span class="sr-only">Open main menu</span>
+          <!-- Hamburger icon -->
+          <svg class="h-6 w-6 block" id="menu-open-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <!-- Close icon -->
+          <svg class="h-6 w-6 hidden" id="menu-close-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile menu -->
+    <div class="lg:hidden hidden" id="mobile-menu">
+      <div class="space-y-1 px-2 pt-2 pb-3 border-t border-primary-100">
+        {
+          navigation.map((link) => (
+            <a 
+              href={link.href} 
+              class="block rounded-md px-3 py-3 text-base font-medium text-primary-700 hover:text-primary-900 hover:bg-primary-50 transition-colors min-h-[48px] flex items-center"
+              aria-current={Astro.url.pathname === link.href ? "page" : undefined}
+            >
+              {link.name}
+            </a>
+          ))
+        }
+        <a
+          href="/new-here"
+          class="block rounded-md px-3 py-3 text-base font-medium text-white bg-primary-600 hover:bg-primary-700 mt-4 min-h-[48px] flex items-center justify-center"
+        >
+          I'm New Here
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  // Mobile menu toggle
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuOpenIcon = document.getElementById('menu-open-icon');
+  const menuCloseIcon = document.getElementById('menu-close-icon');
+
+  if (mobileMenuButton && mobileMenu && menuOpenIcon && menuCloseIcon) {
+    mobileMenuButton.addEventListener('click', () => {
+      const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+      
+      // Toggle menu visibility
+      mobileMenu.classList.toggle('hidden');
+      
+      // Toggle icons
+      menuOpenIcon.classList.toggle('hidden');
+      menuCloseIcon.classList.toggle('block');
+      menuCloseIcon.classList.toggle('hidden');
+      menuOpenIcon.classList.toggle('block');
+      
+      // Update aria-expanded
+      mobileMenuButton.setAttribute('aria-expanded', (!isExpanded).toString());
+    });
+
+    // Close menu when clicking on a link
+    const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+    mobileMenuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        menuOpenIcon.classList.remove('hidden');
+        menuOpenIcon.classList.add('block');
+        menuCloseIcon.classList.add('hidden');
+        menuCloseIcon.classList.remove('block');
+        mobileMenuButton.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+</script>

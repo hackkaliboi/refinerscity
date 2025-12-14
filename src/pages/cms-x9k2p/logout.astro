@@ -1,0 +1,13 @@
+---
+import { signOut, clearAuthCookies } from '../../lib/auth';
+
+// Handle logout
+if (Astro.request.method === 'POST') {
+  await signOut();
+  clearAuthCookies(Astro);
+  return Astro.redirect('/cms-x9k2p/login');
+}
+
+// If GET request, redirect to login
+return Astro.redirect('/cms-x9k2p/login');
+---

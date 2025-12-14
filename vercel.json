@@ -1,0 +1,16 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "astro",
+  "outputDirectory": "dist",
+  "routes": [
+    {
+      "src": "/(.*)",
+      "headers": {
+        "cache-control": "public, max-age=0, must-revalidate"
+      },
+      "continue": true
+    }
+  ]
+}

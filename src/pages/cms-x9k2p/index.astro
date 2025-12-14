@@ -1,0 +1,269 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getDashboardStats, getSermons, getEvents } from '../../lib/api';
+
+// Fetch dashboard data
+const stats = await getDashboardStats();
+const { data: recentSermons } = await getSermons({ limit: 5 });
+const { data: upcomingEvents } = await getEvents({ limit: 5, upcoming: true });
+---
+
+<AdminLayout title="Dashboard">
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Total Sermons -->
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-primary-600">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Total Sermons</p>
+          <p class="text-3xl font-bold text-primary-800 mt-2">{stats.totalSermons}</p>
+        </div>
+        <div class="p-3 bg-primary-100 rounded-full">
+          <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+        </div>
+      </div>
+      <a href="/cms-x9k2p/sermons" class="text-sm text-primary-600 hover:text-primary-800 mt-4 inline-block">
+        View all →
+      </a>
+    </div>
+
+    <!-- Total Events -->
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-600">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Total Events</p>
+          <p class="text-3xl font-bold text-blue-800 mt-2">{stats.totalEvents}</p>
+        </div>
+        <div class="p-3 bg-blue-100 rounded-full">
+          <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+      </div>
+      <a href="/cms-x9k2p/events" class="text-sm text-blue-600 hover:text-blue-800 mt-4 inline-block">
+        View all →
+      </a>
+    </div>
+
+    <!-- Total Ministries -->
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-600">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Total Ministries</p>
+          <p class="text-3xl font-bold text-green-800 mt-2">{stats.totalMinistries}</p>
+        </div>
+        <div class="p-3 bg-green-100 rounded-full">
+          <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        </div>
+      </div>
+      <a href="/cms-x9k2p/ministries" class="text-sm text-green-600 hover:text-green-800 mt-4 inline-block">
+        View all →
+      </a>
+    </div>
+
+    <!-- Live Streams -->
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-red-600">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Live Streams</p>
+          <p class="text-3xl font-bold text-red-800 mt-2">{stats.liveStreams}</p>
+        </div>
+        <div class="p-3 bg-red-100 rounded-full">
+          <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+        </div>
+      </div>
+      {stats.liveStreams > 0 && (
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 mt-4">
+          <span class="w-2 h-2 bg-red-600 rounded-full mr-1.5 animate-pulse"></span>
+          Currently Live
+        </span>
+      )}
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="mb-8">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <a
+        href="/cms-x9k2p/sermons/new"
+        class="flex items-center p-4 bg-white rounded-lg shadow hover:shadow-md transition-all border border-gray-200 hover:border-primary-300"
+      >
+        <div class="p-2 bg-primary-100 rounded-lg mr-4">
+          <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold text-gray-800">Add Sermon</p>
+          <p class="text-sm text-gray-600">Upload new sermon</p>
+        </div>
+      </a>
+
+      <a
+        href="/cms-x9k2p/events/new"
+        class="flex items-center p-4 bg-white rounded-lg shadow hover:shadow-md transition-all border border-gray-200 hover:border-blue-300"
+      >
+        <div class="p-2 bg-blue-100 rounded-lg mr-4">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold text-gray-800">Create Event</p>
+          <p class="text-sm text-gray-600">Schedule new event</p>
+        </div>
+      </a>
+
+      <a
+        href="/media"
+        class="flex items-center p-4 bg-white rounded-lg shadow hover:shadow-md transition-all border border-gray-200 hover:border-green-300"
+      >
+        <div class="p-2 bg-green-100 rounded-lg mr-4">
+          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div>
+          <p class="font-semibold text-gray-800">Upload Media</p>
+          <p class="text-sm text-gray-600">Add images/videos</p>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Two Column Layout -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Recent Sermons -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-800">Recent Sermons</h3>
+        <a href="/cms-x9k2p/sermons" class="text-sm text-primary-600 hover:text-primary-800">
+          View all →
+        </a>
+      </div>
+      
+      {recentSermons && recentSermons.length > 0 ? (
+        <div class="space-y-3">
+          {recentSermons.map((sermon) => (
+            <div class="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors">
+              <div class="flex-shrink-0 w-16 h-16 bg-primary-100 rounded-lg flex items-center justify-center mr-3">
+                {sermon.is_live ? (
+                  <span class="flex items-center text-red-600 text-xs font-bold">
+                    <span class="w-2 h-2 bg-red-600 rounded-full mr-1 animate-pulse"></span>
+                    LIVE
+                  </span>
+                ) : (
+                  <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                )}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-gray-800 truncate">{sermon.title}</p>
+                <p class="text-sm text-gray-600">{sermon.speaker}</p>
+                <p class="text-xs text-gray-500 mt-1">
+                  {new Date(sermon.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                </p>
+              </div>
+              <a
+                href={`/cms-x9k2p/sermons/${sermon.id}/edit`}
+                class="ml-2 p-2 text-gray-400 hover:text-primary-600 transition-colors"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </a>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-8 text-gray-500">
+          <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+          <p>No sermons yet</p>
+          <a href="/cms-x9k2p/sermons/new" class="text-primary-600 hover:text-primary-800 text-sm mt-2 inline-block">
+            Add your first sermon →
+          </a>
+        </div>
+      )}
+    </div>
+
+    <!-- Upcoming Events -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-800">Upcoming Events</h3>
+        <a href="/cms-x9k2p/events" class="text-sm text-primary-600 hover:text-primary-800">
+          View all →
+        </a>
+      </div>
+      
+      {upcomingEvents && upcomingEvents.length > 0 ? (
+        <div class="space-y-3">
+          {upcomingEvents.map((event) => (
+            <div class="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors">
+              <div class="flex-shrink-0 w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                <div class="text-center">
+                  <p class="text-xs text-blue-600 font-semibold">
+                    {new Date(event.start_date).toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}
+                  </p>
+                  <p class="text-lg font-bold text-blue-800">
+                    {new Date(event.start_date).getDate()}
+                  </p>
+                </div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-gray-800 truncate">{event.title}</p>
+                <p class="text-sm text-gray-600 truncate">{event.location || 'No location'}</p>
+                <p class="text-xs text-gray-500 mt-1">
+                  {new Date(event.start_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                </p>
+              </div>
+              <a
+                href={`/cms-x9k2p/events/${event.id}/edit`}
+                class="ml-2 p-2 text-gray-400 hover:text-blue-600 transition-colors"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </a>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-8 text-gray-500">
+          <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <p>No upcoming events</p>
+          <a href="/cms-x9k2p/events/new" class="text-primary-600 hover:text-primary-800 text-sm mt-2 inline-block">
+            Create your first event →
+          </a>
+        </div>
+      )}
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+</style>

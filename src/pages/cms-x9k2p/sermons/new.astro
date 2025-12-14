@@ -1,0 +1,367 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { createSermon } from '../../../lib/api';
+
+const errors: string[] = [];
+let formData: any = {};
+
+// Handle form submission
+if (Astro.request.method === 'POST') {
+  try {
+    const data = await Astro.request.formData();
+    
+    formData = {
+      title: data.get('title')?.toString() || '',
+      speaker: data.get('speaker')?.toString() || '',
+      date: data.get('date')?.toString() || '',
+      series: data.get('series')?.toString() || '',
+      description: data.get('description')?.toString() || '',
+      video_url: data.get('video_url')?.toString() || null,
+      audio_url: data.get('audio_url')?.toString() || null,
+      thumbnail_url: data.get('thumbnail_url')?.toString() || null,
+      youtube_video_id: data.get('youtube_video_id')?.toString() || null,
+      vimeo_video_id: data.get('vimeo_video_id')?.toString() || null,
+      facebook_video_id: data.get('facebook_video_id')?.toString() || null,
+      spotify_url: data.get('spotify_url')?.toString() || null,
+      apple_podcasts_url: data.get('apple_podcasts_url')?.toString() || null,
+      google_podcasts_url: data.get('google_podcasts_url')?.toString() || null,
+      live_stream_url: data.get('live_stream_url')?.toString() || null,
+      stream_platform: data.get('stream_platform')?.toString() || null,
+      scheduled_stream_time: data.get('scheduled_stream_time')?.toString() || null,
+      featured: data.get('featured') === 'on',
+      is_live: data.get('is_live') === 'on',
+    };
+
+    // Validation
+    if (!formData.title) errors.push('Title is required');
+    if (!formData.speaker) errors.push('Speaker is required');
+    if (!formData.date) errors.push('Date is required');
+
+    if (errors.length === 0) {
+      const { data: sermon, error } = await createSermon(formData);
+      
+      if (error) {
+        errors.push(error.message);
+      } else {
+        return Astro.redirect('/cms-x9k2p/sermons');
+      }
+    }
+  } catch (error) {
+    errors.push('An unexpected error occurred');
+  }
+}
+---
+
+<AdminLayout title="Add New Sermon">
+  <div class="max-w-4xl">
+    <!-- Header -->
+    <div class="mb-6">
+      <a href="/cms-x9k2p/sermons" class="text-primary-600 hover:text-primary-800 text-sm mb-2 inline-block">
+        ← Back to Sermons
+      </a>
+      <h2 class="text-2xl font-bold text-gray-800">Add New Sermon</h2>
+      <p class="text-gray-600 mt-1">Fill in the details below to create a new sermon</p>
+    </div>
+
+    <!-- Error Messages -->
+    {errors.length > 0 && (
+      <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <div class="flex items-start">
+          <svg class="w-5 h-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+          <div class="flex-1">
+            {errors.map(error => (
+              <p class="text-sm text-red-800">{error}</p>
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
+
+    <!-- Form -->
+    <form method="POST" class="space-y-6">
+      <!-- Basic Information -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Basic Information</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Title -->
+          <div class="md:col-span-2">
+            <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+              Title <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title || ''}
+              required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="Enter sermon title"
+            />
+          </div>
+
+          <!-- Speaker -->
+          <div>
+            <label for="speaker" class="block text-sm font-medium text-gray-700 mb-2">
+              Speaker <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="speaker"
+              name="speaker"
+              value={formData.speaker || ''}
+              required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="Pastor name"
+            />
+          </div>
+
+          <!-- Date -->
+          <div>
+            <label for="date" class="block text-sm font-medium text-gray-700 mb-2">
+              Date <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              id="date"
+              name="date"
+              value={formData.date || ''}
+              required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            />
+          </div>
+
+          <!-- Series -->
+          <div class="md:col-span-2">
+            <label for="series" class="block text-sm font-medium text-gray-700 mb-2">
+              Series
+            </label>
+            <input
+              type="text"
+              id="series"
+              name="series"
+              value={formData.series || ''}
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="e.g., Faith Foundations"
+            />
+          </div>
+
+          <!-- Description -->
+          <div class="md:col-span-2">
+            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+              Description
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              rows="4"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="Brief description of the sermon"
+            >{formData.description || ''}</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Media Links -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Media Links</h3>
+        
+        <div class="space-y-4">
+          <!-- Video URL -->
+          <div>
+            <label for="video_url" class="block text-sm font-medium text-gray-700 mb-2">
+              Video URL (YouTube, Vimeo, etc.)
+            </label>
+            <input
+              type="url"
+              id="video_url"
+              name="video_url"
+              value={formData.video_url || ''}
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="https://youtube.com/watch?v=..."
+            />
+          </div>
+
+          <!-- Audio URL -->
+          <div>
+            <label for="audio_url" class="block text-sm font-medium text-gray-700 mb-2">
+              Audio URL
+            </label>
+            <input
+              type="url"
+              id="audio_url"
+              name="audio_url"
+              value={formData.audio_url || ''}
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="https://..."
+            />
+          </div>
+
+          <!-- Thumbnail URL -->
+          <div>
+            <label for="thumbnail_url" class="block text-sm font-medium text-gray-700 mb-2">
+              Thumbnail URL
+            </label>
+            <input
+              type="url"
+              id="thumbnail_url"
+              name="thumbnail_url"
+              value={formData.thumbnail_url || ''}
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="https://..."
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Podcast Platforms -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Podcast Platforms</h3>
+        
+        <div class="space-y-4">
+          <div>
+            <label for="spotify_url" class="block text-sm font-medium text-gray-700 mb-2">
+              Spotify URL
+            </label>
+            <input
+              type="url"
+              id="spotify_url"
+              name="spotify_url"
+              value={formData.spotify_url || ''}
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="https://open.spotify.com/..."
+            />
+          </div>
+
+          <div>
+            <label for="apple_podcasts_url" class="block text-sm font-medium text-gray-700 mb-2">
+              Apple Podcasts URL
+            </label>
+            <input
+              type="url"
+              id="apple_podcasts_url"
+              name="apple_podcasts_url"
+              value={formData.apple_podcasts_url || ''}
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="https://podcasts.apple.com/..."
+            />
+          </div>
+
+          <div>
+            <label for="google_podcasts_url" class="block text-sm font-medium text-gray-700 mb-2">
+              Google Podcasts URL
+            </label>
+            <input
+              type="url"
+              id="google_podcasts_url"
+              name="google_podcasts_url"
+              value={formData.google_podcasts_url || ''}
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="https://podcasts.google.com/..."
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Streaming -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Live Streaming</h3>
+        
+        <div class="space-y-4">
+          <div>
+            <label for="live_stream_url" class="block text-sm font-medium text-gray-700 mb-2">
+              Live Stream URL
+            </label>
+            <input
+              type="url"
+              id="live_stream_url"
+              name="live_stream_url"
+              value={formData.live_stream_url || ''}
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              placeholder="https://youtube.com/watch?v=..."
+            />
+          </div>
+
+          <div>
+            <label for="stream_platform" class="block text-sm font-medium text-gray-700 mb-2">
+              Stream Platform
+            </label>
+            <select
+              id="stream_platform"
+              name="stream_platform"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            >
+              <option value="">Select platform</option>
+              <option value="youtube">YouTube</option>
+              <option value="vimeo">Vimeo</option>
+              <option value="facebook">Facebook Live</option>
+              <option value="custom">Custom RTMP</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="scheduled_stream_time" class="block text-sm font-medium text-gray-700 mb-2">
+              Scheduled Stream Time
+            </label>
+            <input
+              type="datetime-local"
+              id="scheduled_stream_time"
+              name="scheduled_stream_time"
+              value={formData.scheduled_stream_time || ''}
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            />
+          </div>
+
+          <div class="flex items-center">
+            <input
+              type="checkbox"
+              id="is_live"
+              name="is_live"
+              checked={formData.is_live}
+              class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+            />
+            <label for="is_live" class="ml-2 text-sm text-gray-700">
+              Mark as currently live
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Settings</h3>
+        
+        <div class="flex items-center">
+          <input
+            type="checkbox"
+            id="featured"
+            name="featured"
+            checked={formData.featured}
+            class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+          />
+          <label for="featured" class="ml-2 text-sm text-gray-700">
+            Feature this sermon on homepage
+          </label>
+        </div>
+      </div>
+
+      <!-- Submit Buttons -->
+      <div class="flex items-center justify-end gap-4">
+        <a
+          href="/cms-x9k2p/sermons"
+          class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all"
+        >
+          Cancel
+        </a>
+        <button
+          type="submit"
+          class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all shadow-md hover:shadow-lg"
+        >
+          Create Sermon
+        </button>
+      </div>
+    </form>
+  </div>
+</AdminLayout>

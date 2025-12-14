@@ -1,6 +1,7 @@
 ---
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
+import '../styles/global.css';
 
 interface Props {
   title: string;
@@ -38,11 +39,6 @@ const {
 
     <!-- Cache Control -->
     <meta http-equiv="Cache-Control" content="max-age=31536000" />
-    
-    <!-- Global Styles -->
-    <style is:global>
-      @import "../styles/global.css";
-    </style>
   </head>
   <body class="min-h-screen bg-white flex flex-col">
     <Navigation />
